@@ -8,7 +8,14 @@ from .models import (
 #---------- FixSerializer------
 
 class FixSerializer(serializers.ModelSerializer):
-    pass
+
+    created = serializers.StringRelatedField()
+    created_id = serializers.IntegerField(required=False)
+
+    def create(self, validated_data):
+        validated_data['created_id'] = self.context['request'].user.id
+        return super().create(validated_data)
+
 
 #---------- Passenger Serializer------
 
