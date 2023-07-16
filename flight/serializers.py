@@ -24,16 +24,42 @@ class PassengerSerializer(FixSerializer):
     class Meta:
         model=Passenger
         exclude = []
+    def gender_gender_text(self, obj):
+        return obj.get_gender_display()
 
 #---------- Flight Serializer------
 
 class FlightSerializer(FixSerializer):
     
+    departure_text = serializers.SerializerMethodField()
+    arrival_text = serializers.SerializerMethodField()
     class Meta:
         model= Flight
-        exclude = []
+        fields = (
+            "id",
+            "created",
+            "created_id",
+            "departure_text",
+            "arrival_text",
+            "created_time",
+            "updated_time",
+            "flight_number",
+            "airline",
+            "departure",
+            "departure_date",
+            "arrival",
+            "arrival_date",
+            "get_airline_display", # dont need SerializerMethodField.
+        )
 
-
+    # SerializerMethodField()
+    def get_departure_text(self, obj):
+        return obj.get_departure_display()
+    
+    # SerializerMethodField
+    def get_arrival_text(self, obj):
+        return obj.get_arrival_display()
+    
 #---------- Reservation Serializer------
 
 class ReservationSerializer(FixSerializer):
