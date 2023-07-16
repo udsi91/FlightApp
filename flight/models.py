@@ -8,18 +8,18 @@ class FixModel(models.Model):
     updated_time = models.DateTimeField(auto_now=True)
 
     class Meta:
-        abstract = True #Dont create table demiş olduk.
+        abstract = True # dont create table.
 
 
 
 #------------------ PASSENGER -----------------
 class Passenger(FixModel):
-    
-    GENDERS= {
+
+    GENDERS = (
         ('F', 'Female'),
         ('M', 'Male'),
-        ('0', 'Undefined'),
-    }
+        ('0', 'Prefer Not To Say'),
+    )
 
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
@@ -27,18 +27,18 @@ class Passenger(FixModel):
     gender = models.CharField(max_length=1, choices=GENDERS, default='0')
 
     def __str__(self):
-        return f'{self.first_name} # {self.last_name}'
+        return f'{self.first_name} {self.last_name}'
 
 #------------------ FLIGHT -----------------
 class Flight(FixModel):
-    
-    AIRLINES = {
-        ('THY', 'Turkish Airlines'),
-        ('PEG', 'Pegasus'),
-        ('SUN', 'Sun Expres'),
-    }
 
-    CITIES = {
+    AIRLINES = (
+        ('THY', 'Turkish Airlines'),
+        ('SUN', 'Sun Airlines'),
+        ('SEL', 'Selim Airlines'),
+    )
+
+    CITIES = (
         (1, 'Adana'),
         (6, 'Ankara'),
         (7, 'Antalya'),
@@ -50,23 +50,22 @@ class Flight(FixModel):
         (35, 'Izmir'),
         (44, 'Malatya'),
         (52, 'Ordu'),
-    }
+    )
 
     flight_number = models.CharField(max_length=64)
-    airline= models.CharField(max_length=3, choices=AIRLINES)
+    airline = models.CharField(max_length=3, choices=AIRLINES)
     departure = models.PositiveSmallIntegerField(choices=CITIES)
     departure_date = models.DateField()
     arrival = models.PositiveSmallIntegerField(choices=CITIES)
     arrival_date = models.DateField()
-    
 
     def __str__(self):
-        return f'{self.flight_number} # {self.airline} / {self.departure} -> {self.arrival}'
+        return f'{self.flight_number} # {self.airline}'
 
 #------------------ RESERVATION -----------------
 class Reservation(FixModel):
-    flight= models.ForeignKey(Flight, on_delete=models.CASCADE)
-    passenger= models.ManyToManyField(Passenger)
-    
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
+    passenger = models.ManyToManyField(Passenger)
+
     def __str__(self):
-        return f'{self.flight} -> [{self.passenger.count()}]'
+        return f'{self.flight} [{self.passenger.count()}]'

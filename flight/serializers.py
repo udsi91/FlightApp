@@ -20,7 +20,8 @@ class FixSerializer(serializers.ModelSerializer):
 #---------- Passenger Serializer------
 
 class PassengerSerializer(FixSerializer):
-    
+
+    gender_text = serializers.SerializerMethodField()
     class Meta:
         model=Passenger
         exclude = []
@@ -30,11 +31,11 @@ class PassengerSerializer(FixSerializer):
 #---------- Flight Serializer------
 
 class FlightSerializer(FixSerializer):
-    
-    departure_text = serializers.SerializerMethodField()
+
+    departure_text = serializers.SerializerMethodField() # return from get_field_name()
     arrival_text = serializers.SerializerMethodField()
     class Meta:
-        model= Flight
+        model = Flight
         fields = (
             "id",
             "created",
@@ -64,6 +65,16 @@ class FlightSerializer(FixSerializer):
 
 class ReservationSerializer(FixSerializer):
     
+    flight_id = serializers.IntegerField(write_only=True)
+    passenger_ids = serializers.ListField(write_only=True)
+
+    flight = FlightSerializer(read_only=True) # ForeingKey()
+    passenger = PassengerSerializer(read_only=True, many=True) # ManyToMany()
+
     class Meta:
         model = Reservation
         exclude = []
+
+    def create(self, validated_data):
+        validated_data["passenger"] = validated_data.pop('passenger_ids')
+        return super().create(validated_data)
